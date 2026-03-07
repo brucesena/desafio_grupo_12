@@ -16,7 +16,7 @@
 
 👥 Integrantes do Grupo
 
-    Nome Sobrenome
+    Bruce Sena
 
     Nome Sobrenome
 
