@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de financiamento PRICE</title>
+</head>
+<body>
+    <a href="index.html">Voltar para a página inicial</a>
+    <h1>PRICE</h1>
+    <div>
+        <form id="dados_financiamento_price">
+            <label for="valor_financiamento_price">Valor do financiamento:</label>
+            <input type="number" id="valor_financiamento_price" name="valor_financiamento_price" required><br><br>
+
+            <label for="taxa_juros_price">Taxa de juros mensal (%):</label>
+            <input type="number" id="taxa_juros_price" name="taxa_juros_price" step="0.01" required><br><br>
+
+            <label for="num_parcelas_price">Número de parcelas:</label>
+            <input type="number" id="num_parcelas_price" name="num_parcelas_price" required><br><br>
+
+            <button type="submit">Gerar parcelas</button>
+        </form>        
+    </div>
+    <div>
+        <table name="tabela_price" id="tabela_price">
+            <tr>
+                <th>Parcela</th>
+                <th>Valor da Parcela</th>
+                <th>Amortização</th>
+                <th>Juros</th>
+                <th>Saldo Devedor</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>            
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
