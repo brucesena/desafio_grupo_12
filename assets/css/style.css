@@ -1,0 +1,29 @@
+body{
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+}
+
+#conteudo{
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+#form label{
+    display: block;
+    margin-bottom: 5px;
+}
+
+#form input{
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#conteudo h1{
+    text-align: center;
+}

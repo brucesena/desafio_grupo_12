@@ -22,4 +22,4 @@
 
     Lucas da Rosa Nunes
 
-    Nome Sobrenome
+    Vinicius Wobeto Sperb
