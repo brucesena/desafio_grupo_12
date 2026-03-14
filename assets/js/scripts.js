@@ -66,10 +66,10 @@ function calcula_sac() {
         
         parcelas.push({ 
             parcela: i, 
-            valor_parcela: valor_parcela.toFixed(2), 
-            amortizacao: amortizacao.toFixed(2), 
-            juros: juros.toFixed(2), 
-            saldo_devedor: saldo_devedor.toFixed(2)
+            valor_parcela: valor_parcela, 
+            amortizacao: amortizacao, 
+            juros: juros, 
+            saldo_devedor: saldo_devedor
         });
     }
 
@@ -88,10 +88,10 @@ function mostra_resultado(tabela, parcelas) {
     parcelas.forEach(function (parcela) {
         tabela_html.innerHTML += "<tr> "+
             "<td>" + parcela.parcela + "</td>" +
-            "<td>" + parcela.valor_parcela + "</td>" +
-            "<td>" + parcela.amortizacao + "</td>" +
-            "<td>" + parcela.juros + "</td>" +
-            "<td>" + parcela.saldo_devedor + "</td>" +
+            "<td>" + parcela.valor_parcela.toFixed(2) + "</td>" +
+            "<td>" + parcela.amortizacao.toFixed(2) + "</td>" +
+            "<td>" + parcela.juros.toFixed(2) + "</td>" +
+            "<td>" + parcela.saldo_devedor.toFixed(2) + "</td>" +
             "</tr>";
     });
 }
