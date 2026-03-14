@@ -4,9 +4,8 @@ $(document).ready(function(){
 
 function getValorNumerico(campo) {
     let valor = document.getElementById(campo).value;
-    // remover letras e simbolos
-    valor = valor.toString().replace(/\D/g, "");
-    return parseFloat(valor);
+    //remover letras e simbolos
+    return parseFloat(valor.replace(/[R$\s]/g, "").replace(/\./g, "").replace(/,/g, "."));
 }
 
 function calcula_price() {
@@ -50,10 +49,30 @@ function calcula_price() {
 }
 
 function calcula_sac() {
-    parcelas = [];
-    parcelas.push({ parcela: 1, valor_parcela: 1000, amortizacao: 500, juros: 500, saldo_devedor: 5000 });
-    parcelas.push({ parcela: 2, valor_parcela: 500, amortizacao: 250, juros: 250, saldo_devedor: 2500 });
-    parcelas.push({ parcela: 3, valor_parcela: 250, amortizacao: 125, juros: 125, saldo_devedor: 1250 });
+
+    //variaveis sac
+    let valor_entrada = getValorNumerico("valor_entrada_sac");
+    let valor_financiamento = getValorNumerico("valor_financiamento_sac");
+    let taxa_juros = getValorNumerico("taxa_juros_sac") / 100;
+    let n_parcelas = getValorNumerico("num_parcelas_sac");
+    let valor_presente = valor_financiamento - valor_entrada;
+    parcelas = []
+    for (let i = 1; i <= n_parcelas; i++) {
+
+        let amortizacao = valor_presente / n_parcelas;
+        let juros = (valor_presente - (amortizacao * (i - 1))) * taxa_juros;
+        let valor_parcela = amortizacao + juros;
+        let saldo_devedor = valor_presente - (amortizacao * i);
+        
+        parcelas.push({ 
+            parcela: i, 
+            valor_parcela: valor_parcela.toFixed(2), 
+            amortizacao: amortizacao.toFixed(2), 
+            juros: juros.toFixed(2), 
+            saldo_devedor: saldo_devedor.toFixed(2)
+        });
+    }
+
     mostra_resultado("tabela_sac", parcelas);
 
 }
