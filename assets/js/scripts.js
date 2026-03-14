@@ -1,24 +1,15 @@
-const camposValores = document.querySelectorAll(".valores");
-
-camposValores.forEach(function (campo) {
-
-    campo.addEventListener("input", function (e) {
-
-        let valor = e.target.value;
-
-        valor = valor.replace(/\D/g, "");
-
-        valor = (valor / 100).toFixed(2);
-
-        valor = valor.replace(".", ",");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-        e.target.value = "R$ " + valor;
-
-    });
-
+$(document).ready(function(){
+    $(".valores").maskMoney({prefix:'R$ ', allowNegative: false, thousands:'.', decimal:',', affixesStay: false});
 });
 
+
+function calcula_price() {
+    parcelas = [];
+    // calculo do valor das parcelas
+    parcelas.push({ parcela: 1, valor_parcela: 1000, amortizacao: 500, juros: 500, saldo_devedor: 5000 });
+    parcelas.push({ parcela: 2, valor_parcela: 500, amortizacao: 250, juros: 250, saldo_devedor: 2500 });
+    parcelas.push({ parcela: 3, valor_parcela: 250, amortizacao: 125, juros: 125, saldo_devedor: 1250 });
+    motra_resultado("tabela_price", parcelas);
 
 function getValorNumerico(campo) {
     let valor = document.getElementById(campo).value;
