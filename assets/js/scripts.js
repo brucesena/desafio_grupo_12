@@ -2,15 +2,6 @@ $(document).ready(function(){
     $(".valores").maskMoney({prefix:'R$ ', allowNegative: false, thousands:'.', decimal:',', affixesStay: false});
 });
 
-
-function calcula_price() {
-    parcelas = [];
-    // calculo do valor das parcelas
-    parcelas.push({ parcela: 1, valor_parcela: 1000, amortizacao: 500, juros: 500, saldo_devedor: 5000 });
-    parcelas.push({ parcela: 2, valor_parcela: 500, amortizacao: 250, juros: 250, saldo_devedor: 2500 });
-    parcelas.push({ parcela: 3, valor_parcela: 250, amortizacao: 125, juros: 125, saldo_devedor: 1250 });
-    motra_resultado("tabela_price", parcelas);
-
 function getValorNumerico(campo) {
     let valor = document.getElementById(campo).value;
     // remover letras e simbolos
@@ -84,7 +75,4 @@ function mostra_resultado(tabela, parcelas) {
             "<td>" + parcela.saldo_devedor + "</td>" +
             "</tr>";
     });
-
-
-
 }
