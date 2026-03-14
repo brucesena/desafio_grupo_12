@@ -19,13 +19,21 @@ camposValores.forEach(function (campo) {
 
 });
 
+
+function getValorNumerico(campo) {
+    let valor = document.getElementById(campo).value;
+    // remover letras e simbolos
+    valor = valor.toString().replace(/\D/g, "");
+    return parseFloat(valor);
+}
+
 function calcula_price() {
 
     //variaveis price
-    let valor_entrada = document.getElementById("valor_entrada_price").valueAsNumber;
-    let valor_financiamento = document.getElementById("valor_financiamento_price").valueAsNumber;
-    let taxa_juros = document.getElementById("taxa_juros_price").valueAsNumber / 100;
-    let n_parcelas = document.getElementById("num_parcelas_price").valueAsNumber;
+    let valor_entrada = getValorNumerico("valor_entrada_price");
+    let valor_financiamento = getValorNumerico("valor_financiamento_price");
+    let taxa_juros = getValorNumerico("taxa_juros_price") / 100;
+    let n_parcelas = getValorNumerico("num_parcelas_price");
     let valor_presente = valor_financiamento - valor_entrada;
 
     let valor_parcela =
@@ -74,10 +82,10 @@ function calcula_sac() {
  * @param {*} parcelas Parcelas geradas no metodo calcula_price ou calcula_sac
  */
 function mostra_resultado(tabela, parcelas) {
-    let tabela_html = document.getElementById(tabela);
+    let tabela_html = document.getElementById("corpo_" + tabela);
     tabela_html.innerHTML = "";
     parcelas.forEach(function (parcela) {
-        tabela_html.innerHTML += "<tr>" +
+        tabela_html.innerHTML += "<tr> "+
             "<td>" + parcela.parcela + "</td>" +
             "<td>" + parcela.valor_parcela + "</td>" +
             "<td>" + parcela.amortizacao + "</td>" +
