@@ -1,24 +1,6 @@
-const camposValores = document.querySelectorAll(".valores");
-
-camposValores.forEach(function (campo) {
-
-    campo.addEventListener("input", function (e) {
-
-        let valor = e.target.value;
-
-        valor = valor.replace(/\D/g, "");
-
-        valor = (valor / 100).toFixed(2);
-
-        valor = valor.replace(".", ",");
-        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-        e.target.value = "R$ " + valor;
-
-    });
-
+$(document).ready(function(){
+    $(".valores").maskMoney({prefix:'R$ ', allowNegative: false, thousands:'.', decimal:',', affixesStay: false});
 });
-
 
 function getValorNumerico(campo) {
     let valor = document.getElementById(campo).value;
@@ -93,7 +75,4 @@ function mostra_resultado(tabela, parcelas) {
             "<td>" + parcela.saldo_devedor + "</td>" +
             "</tr>";
     });
-
-
-
 }
