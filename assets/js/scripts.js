@@ -44,7 +44,6 @@ function calcula_price() {
     }
   mostra_resultado("tabela_price", parcelas);
 
-  console.log(parcelas);
 
 }
 
@@ -88,10 +87,10 @@ function mostra_resultado(tabela, parcelas) {
     parcelas.forEach(function (parcela) {
         tabela_html.innerHTML += "<tr> "+
             "<td>" + parcela.parcela + "</td>" +
-            "<td>" + parcela.valor_parcela + "</td>" +
-            "<td>" + parcela.amortizacao + "</td>" +
-            "<td>" + parcela.juros + "</td>" +
-            "<td>" + parcela.saldo_devedor + "</td>" +
+            "<td>" + (parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
             "</tr>";
     });
 }
