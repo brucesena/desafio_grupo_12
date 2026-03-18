@@ -7,7 +7,28 @@ function getValorNumerico(campo) {
     //remover letras e simbolos
     return parseFloat(valor.replace(/[R$\s]/g, "").replace(/\./g, "").replace(/,/g, "."));
 }
+function formatarDataBR(data) {
+    return data.toLocaleDateString('pt-BR');
+}
+function adicionarMeses(dataBase, meses) {
+    const diaOriginal = dataBase.getDate();
 
+    let novaData = new Date(
+        dataBase.getFullYear(),
+        dataBase.getMonth() + meses,
+        1
+    );
+
+    let ultimoDiaMes = new Date(
+        novaData.getFullYear(),
+        novaData.getMonth() + 1,
+        0
+    ).getDate();
+
+    novaData.setDate(Math.min(diaOriginal, ultimoDiaMes));
+
+    return novaData;
+}
 function calcula_price() {
 
     //variaveis price
@@ -26,6 +47,7 @@ function calcula_price() {
 
     let parcelas = [];
     let saldo_devedor = valor_presente; 
+    let data_base = new Date();
 
     for (let i = 1; i <= n_parcelas; i++) {
 
@@ -33,9 +55,11 @@ function calcula_price() {
         let amortizacao = valor_parcela - juros;
 
         saldo_devedor = saldo_devedor - amortizacao;
+        let data_parcela = adicionarMeses(data_base, i); 
 
         parcelas.push({
             parcela: i,
+            vencimento: formatarDataBR(data_parcela),
             valor_parcela: valor_parcela,
             amortizacao: amortizacao,
             juros: juros,
@@ -44,7 +68,6 @@ function calcula_price() {
     }
   mostra_resultado("tabela_price", parcelas);
 
-  console.log(parcelas);
 
 }
 
@@ -57,16 +80,20 @@ function calcula_sac() {
     let n_parcelas = getValorNumerico("num_parcelas_sac");
     let valor_presente = valor_financiamento - valor_entrada;
     parcelas = []
+    let data_base = new Date();
+
     for (let i = 1; i <= n_parcelas; i++) {
 
         let amortizacao = valor_presente / n_parcelas;
         let juros = (valor_presente - (amortizacao * (i - 1))) * taxa_juros;
         let valor_parcela = amortizacao + juros;
         let saldo_devedor = valor_presente - (amortizacao * i);
-        
+        let data_parcela = adicionarMeses(data_base, i); 
+
         parcelas.push({ 
             parcela: i, 
             valor_parcela: valor_parcela.toFixed(2), 
+            vencimento: formatarDataBR(data_parcela),
             amortizacao: amortizacao.toFixed(2), 
             juros: juros.toFixed(2), 
             saldo_devedor: saldo_devedor.toFixed(2)
@@ -88,10 +115,11 @@ function mostra_resultado(tabela, parcelas) {
     parcelas.forEach(function (parcela) {
         tabela_html.innerHTML += "<tr> "+
             "<td>" + parcela.parcela + "</td>" +
-            "<td>" + parcela.valor_parcela + "</td>" +
-            "<td>" + parcela.amortizacao + "</td>" +
-            "<td>" + parcela.juros + "</td>" +
-            "<td>" + parcela.saldo_devedor + "</td>" +
+            "<td>" + (parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>" + (parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
+            "<td>"+parcela.vencimento+"</td>"
             "</tr>";
     });
 }
