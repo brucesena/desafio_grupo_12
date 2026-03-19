@@ -92,11 +92,11 @@ function calcula_sac() {
 
         parcelas.push({ 
             parcela: i, 
-            valor_parcela: valor_parcela.toFixed(2), 
+            valor_parcela: valor_parcela, 
             vencimento: formatarDataBR(data_parcela),
-            amortizacao: amortizacao.toFixed(2), 
-            juros: juros.toFixed(2), 
-            saldo_devedor: saldo_devedor.toFixed(2)
+            amortizacao: amortizacao, 
+            juros: juros, 
+            saldo_devedor: saldo_devedor
         });
     }
 
