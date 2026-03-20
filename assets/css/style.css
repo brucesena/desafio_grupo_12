@@ -24,6 +24,14 @@ body{
     box-sizing: border-box;
 }
 
+#form select{
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
 #conteudo h1{
     text-align: center;
 }
