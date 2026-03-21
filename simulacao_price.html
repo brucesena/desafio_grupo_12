@@ -32,9 +32,9 @@
             required
           /><br /><br />
 
-          <label for="periodo_taxas">Periodo de juros:</label>
-          <select class="select" id="periodo_taxas" name="periodo_taxas" >
-            <option value="mensal">Mensal</option>
+          <label for="periodo_juros" >Periodo de juros:</label>
+          <select class="select" id="periodo_juros" name="periodo_juros" onChange="atualizaSelect()">
+            <option value="mensal" selected>Mensal</option>
             <option value="trimestral">Trimestral</option>
             <option value="semestral">Semestral</option>
           </select>
@@ -68,6 +68,7 @@
             <th>Parcela</th>
             <th>Valor da Parcela</th>
             <th>Amortização</th>
+            <th>Periodo de Juros</th>
             <th>Juros</th>
             <th>Saldo Devedor</th>
             <th>Vencimento</th>

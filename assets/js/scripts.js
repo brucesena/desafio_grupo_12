@@ -1,6 +1,8 @@
-$(document).ready(function(){
-    $(".valores").maskMoney({prefix:'R$ ', allowNegative: false, thousands:'.', decimal:',', affixesStay: false});
+$(document).ready(function () {
+    $(".valores").maskMoney({ prefix: 'R$ ', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
 });
+
+
 
 function getValorNumerico(campo) {
     let valor = document.getElementById(campo).value;
@@ -29,13 +31,26 @@ function adicionarMeses(dataBase, meses) {
 
     return novaData;
 }
+
 function calcula_price() {
+
+    let select = document.querySelector('#periodo_juros');
+    let periodo_juros = select.value;
 
     //variaveis price
     let valor_entrada = getValorNumerico("valor_entrada_price");
     let valor_financiamento = getValorNumerico("valor_financiamento_price");
     let taxa_juros = getValorNumerico("taxa_juros_price") / 100;
     let n_parcelas = getValorNumerico("num_parcelas_price");
+
+    if (periodo_juros == "trimestral") {
+        taxa_juros = ((1 + taxa_juros) ** (1 / 3)) - 1;
+        n_parcelas = n_parcelas * 3;
+    } else if (periodo_juros == "anual") {
+        taxa_juros = ((1 + taxa_juros) ** (1 / 12)) - 1;
+        n_parcelas = n_parcelas * 12;
+    }
+
     let valor_presente = valor_financiamento - valor_entrada;
 
     let valor_parcela =
@@ -46,7 +61,7 @@ function calcula_price() {
         );
 
     let parcelas = [];
-    let saldo_devedor = valor_presente; 
+    let saldo_devedor = valor_presente;
     let data_base = new Date();
 
     for (let i = 1; i <= n_parcelas; i++) {
@@ -55,7 +70,7 @@ function calcula_price() {
         let amortizacao = valor_parcela - juros;
 
         saldo_devedor = saldo_devedor - amortizacao;
-        let data_parcela = adicionarMeses(data_base, i); 
+        let data_parcela = adicionarMeses(data_base, i);
 
         parcelas.push({
             parcela: i,
@@ -66,9 +81,8 @@ function calcula_price() {
             saldo_devedor: saldo_devedor
         });
     }
-  mostra_resultado("tabela_price", parcelas);
 
-
+    mostra_resultado("tabela_price", parcelas);
 }
 
 function calcula_sac() {
@@ -88,14 +102,14 @@ function calcula_sac() {
         let juros = (valor_presente - (amortizacao * (i - 1))) * taxa_juros;
         let valor_parcela = amortizacao + juros;
         let saldo_devedor = valor_presente - (amortizacao * i);
-        let data_parcela = adicionarMeses(data_base, i); 
+        let data_parcela = adicionarMeses(data_base, i);
 
-        parcelas.push({ 
-            parcela: i, 
-            valor_parcela: valor_parcela, 
+        parcelas.push({
+            parcela: i,
+            valor_parcela: valor_parcela,
             vencimento: formatarDataBR(data_parcela),
-            amortizacao: amortizacao, 
-            juros: juros, 
+            amortizacao: amortizacao,
+            juros: juros,
             saldo_devedor: saldo_devedor
         });
     }
@@ -113,13 +127,13 @@ function mostra_resultado(tabela, parcelas) {
     let tabela_html = document.getElementById("corpo_" + tabela);
     tabela_html.innerHTML = "";
     parcelas.forEach(function (parcela) {
-        tabela_html.innerHTML += "<tr> "+
+        tabela_html.innerHTML += "<tr> " +
             "<td>" + parcela.parcela + "</td>" +
             "<td>" + (parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
             "<td>" + (parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
             "<td>" + (parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
             "<td>" + (parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>"+parcela.vencimento+"</td>"
-            "</tr>";
+            "<td>" + parcela.vencimento + "</td>"
+        "</tr>";
     });
 }
