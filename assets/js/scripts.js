@@ -105,7 +105,7 @@ function calcula_sac() {
 }
 
 /**
- * 
+ *
  * @param {*} tabela Nome do objeto html que vai recebar o resultado
  * @param {*} parcelas Parcelas geradas no metodo calcula_price ou calcula_sac
  */
