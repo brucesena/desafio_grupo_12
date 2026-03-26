@@ -56,7 +56,9 @@ function calcula_price() {
 
         saldo_devedor = saldo_devedor - amortizacao;
         let data_parcela = adicionarMeses(data_base, i); 
-
+        if(saldo_devedor<0){
+            saldo_devedor=0;
+        }
         parcelas.push({
             parcela: i,
             vencimento: formatarDataBR(data_parcela),
@@ -89,7 +91,9 @@ function calcula_sac() {
         let valor_parcela = amortizacao + juros;
         let saldo_devedor = valor_presente - (amortizacao * i);
         let data_parcela = adicionarMeses(data_base, i); 
-
+        if(saldo_devedor<0){
+            saldo_devedor=0;
+        }
         parcelas.push({ 
             parcela: i, 
             valor_parcela: valor_parcela, 
