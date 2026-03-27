@@ -3,7 +3,7 @@ $(document).ready(function(){
 });
 
 function getValorNumerico(campo) {
-    let valor = document.getElementById(campo).value;
+    let valor = $("#" + campo).val();
     //remover letras e simbolos
     return parseFloat(valor.replace(/[R$\s]/g, "").replace(/\./g, "").replace(/,/g, "."));
 }
@@ -114,16 +114,17 @@ function calcula_sac() {
  * @param {*} parcelas Parcelas geradas no metodo calcula_price ou calcula_sac
  */
 function mostra_resultado(tabela, parcelas) {
-    let tabela_html = document.getElementById("corpo_" + tabela);
-    tabela_html.innerHTML = "";
+    tabela_html = $("#corpo_" + tabela)
+    tabela_html.empty();
     parcelas.forEach(function (parcela) {
-        tabela_html.innerHTML += "<tr> "+
-            "<td>" + parcela.parcela + "</td>" +
-            "<td>" + (parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>"+parcela.vencimento+"</td>"
-            "</tr>";
+        tabela_html.append(`<tr>
+            <td>${parcela.parcela}</td>
+            <td>${(parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${(parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${(parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${(parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${parcela.vencimento}</td>
+            </tr>
+        `)
     });
 }
