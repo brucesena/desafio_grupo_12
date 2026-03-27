@@ -29,7 +29,9 @@ function adicionarMeses(dataBase, meses) {
 
     return novaData;
 }
+
 function calcula_price() {
+    if (!$("#dados_financiamento_price").valid()) return; // <- só isso
 
     //variaveis price
     let valor_entrada = getValorNumerico("valor_entrada_price");
@@ -74,6 +76,7 @@ function calcula_price() {
 }
 
 function calcula_sac() {
+    if (!$("#dados_financiamento_sac").valid()) return; 
 
     //variaveis sac
     let valor_entrada = getValorNumerico("valor_entrada_sac");
@@ -128,3 +131,53 @@ function mostra_resultado(tabela, parcelas) {
         `)
     });
 }
+
+
+
+
+$.validator.addMethod("menorQue", function (value, element, param) {
+    return getValorNumerico(element.id) < getValorNumerico(param);
+}, "A entrada deve ser menor que o valor do financiamento.");
+
+$("#dados_financiamento_sac").validate({
+    rules: {
+        valor_financiamento_sac: { required: true },
+        valor_entrada_sac:       { required: true, menorQue: "valor_financiamento_sac" },
+        taxa_juros_sac:          { required: true, min: 0.01 },
+        num_parcelas_sac:        { required: true, min: 1 },
+    },
+    messages: {
+        valor_financiamento_sac: "Informe o valor do financiamento.",
+        valor_entrada_sac:       { required: "Informe o valor da entrada.", menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        taxa_juros_sac:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
+        num_parcelas_sac:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+    },
+    errorElement: "div",
+    errorClass: "invalid-feedback",
+    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    unhighlight: function (el) { $(el).removeClass("is-invalid"); },
+    errorPlacement: function (error, element) { error.insertAfter(element); },
+    submitHandler: function () { return false; }
+});
+
+$("#dados_financiamento_price").validate({
+    rules: {
+        valor_financiamento_price: { required: true },
+        valor_entrada_price:       { required: true, menorQue: "valor_financiamento_price" },
+        taxa_juros_price:          { required: true, min: 0.01 },
+        num_parcelas_price:        { required: true, min: 1 },
+    },
+    messages: {
+        valor_financiamento_price: "Informe o valor do financiamento.",
+        valor_entrada_price:       { required: "Informe o valor da entrada.", menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        taxa_juros_price:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
+        num_parcelas_price:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+    },
+    errorElement: "div",
+    errorClass: "invalid-feedback",
+    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    unhighlight: function (el) { $(el).removeClass("is-invalid"); },
+    errorPlacement: function (error, element) { error.insertAfter(element); },
+    submitHandler: function () { return false; }
+});
+
