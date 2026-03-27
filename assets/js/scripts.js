@@ -134,6 +134,7 @@ function mostra_resultado(tabela, parcelas) {
 
 
 
+//regras de validação dos forms
 
 $.validator.addMethod("menorQue", function (value, element, param) {
     return getValorNumerico(element.id) < getValorNumerico(param);
