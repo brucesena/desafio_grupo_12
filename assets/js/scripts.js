@@ -88,6 +88,7 @@ function calcula_price() {
     let saldo_devedor = valor_presente;
     let data_base = new Date();
 
+    //contador de parcelas 
     let incremento = 1;
     if (periodo_juros == "trimestral") incremento = 3;
     else if (periodo_juros == "semestral") incremento = 6;
