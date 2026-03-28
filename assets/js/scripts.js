@@ -66,10 +66,15 @@ function calcula_price() {
         alert("A entrada não pode ser maior que o financiamento");
         return;
     }
+
+    //contador de parcelas 
+    let incremento = 1;
     if (periodo_juros == "trimestral") {
-        taxa_juros = (1 + taxa_juros) ** 3 - 1;
+        incremento = 3;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
     } else if (periodo_juros == "semestral") {
-        taxa_juros = (1 + taxa_juros) ** 6 - 1;
+        incremento = 6;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
     }
 
     let valor_presente = valor_financiamento - valor_entrada;
@@ -88,11 +93,6 @@ function calcula_price() {
     let parcelas = [];
     let saldo_devedor = valor_presente;
     let data_base = new Date();
-
-    //contador de parcelas 
-    let incremento = 1;
-    if (periodo_juros == "trimestral") incremento = 3;
-    else if (periodo_juros == "semestral") incremento = 6;
 
     for (let i = 1; i <= n_parcelas; i++) {
 
@@ -117,7 +117,12 @@ function calcula_price() {
 
 
 function calcula_sac() {
-    if (!$("#dados_financiamento_sac").valid()) return; 
+    limparTabela("tabela_sac");
+
+    if (!$("#dados_financiamento_sac").valid()) return;
+
+    let select = document.querySelector('#periodo_juros');
+    let periodo_juros = select.value;
 
     //variaveis sac
     let valor_entrada = getValorNumerico("valor_entrada_sac");
@@ -125,8 +130,29 @@ function calcula_sac() {
     let taxa_juros = getValorNumerico("taxa_juros_sac") / 100;
     let n_parcelas = getValorNumerico("num_parcelas_sac");
     let valor_presente = valor_financiamento - valor_entrada;
-    parcelas = []
+    let parcelas = []
     let data_base = new Date();
+
+    // validadores
+    if (!valor_financiamento || !n_parcelas) {
+        alert("Preencha os campos corretamente!");
+        return;
+    }
+
+    if (valor_entrada > valor_financiamento) {
+        alert("A entrada não pode ser maior que o financiamento");
+        return;
+    }
+
+    //contador de parcelas 
+    let incremento = 1;
+    if (periodo_juros == "trimestral") {
+        incremento = 3;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    } else if (periodo_juros == "semestral") {
+        incremento = 6;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    }
 
     for (let i = 1; i <= n_parcelas; i++) {
 
@@ -134,7 +160,7 @@ function calcula_sac() {
         let juros = (valor_presente - (amortizacao * (i - 1))) * taxa_juros;
         let valor_parcela = amortizacao + juros;
         let saldo_devedor = valor_presente - (amortizacao * i);
-        let data_parcela = adicionarMeses(data_base, i);
+        let data_parcela = adicionarMeses(data_base, i * incremento);
 
         parcelas.push({
             parcela: i,
@@ -142,7 +168,7 @@ function calcula_sac() {
             vencimento: formatarDataBR(data_parcela),
             amortizacao: amortizacao,
             juros: juros,
-            saldo_devedor: saldo_devedor
+            saldo_devedor: saldo_devedor < 0 ? 0 : saldo_devedor
         });
     }
 
@@ -189,18 +215,18 @@ $("#dados_financiamento_sac").validate({
                 depends: function (element) { return getValorNumerico(element.id) > 0; }
             }
         },
-        taxa_juros_sac:  { required: true, min: 0.01 },
+        taxa_juros_sac: { required: false, min: 0.00 }, // <-- A taxa de juros pode ser 0? Se não, required: true
         num_parcelas_sac: { required: true, min: 1 },
     },
     messages: {
         valor_financiamento_sac: "Informe o valor do financiamento.",
-        valor_entrada_sac:       { menorQue: "A entrada deve ser menor que o valor do financiamento." },
-        taxa_juros_sac:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
-        num_parcelas_sac:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+        valor_entrada_sac: { menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        //taxa_juros_sac: { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },  <-- A taxa de juros pode ser 0? Se não, descomentar
+        num_parcelas_sac: { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
     },
     errorElement: "div",
     errorClass: "invalid-feedback",
-    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    highlight: function (el) { $(el).addClass("is-invalid"); },
     unhighlight: function (el) { $(el).removeClass("is-invalid"); },
     errorPlacement: function (error, element) { error.insertAfter(element); },
     submitHandler: function () { return false; }
@@ -216,18 +242,18 @@ $("#dados_financiamento_price").validate({
                 depends: function (element) { return getValorNumerico(element.id) > 0; }
             }
         },
-        taxa_juros_price:  { required: true, min: 0.01 },
+        taxa_juros_price: { required: true, min: 0.01 },
         num_parcelas_price: { required: true, min: 1 },
     },
     messages: {
         valor_financiamento_price: "Informe o valor do financiamento.",
-        valor_entrada_price:       { menorQue: "A entrada deve ser menor que o valor do financiamento." },
-        taxa_juros_price:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
-        num_parcelas_price:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+        valor_entrada_price: { menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        taxa_juros_price: { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
+        num_parcelas_price: { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
     },
     errorElement: "div",
     errorClass: "invalid-feedback",
-    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    highlight: function (el) { $(el).addClass("is-invalid"); },
     unhighlight: function (el) { $(el).removeClass("is-invalid"); },
     errorPlacement: function (error, element) { error.insertAfter(element); },
     submitHandler: function () { return false; }
