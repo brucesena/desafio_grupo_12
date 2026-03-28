@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -30,7 +30,9 @@
           <i class="bi bi-arrow-left"></i>Voltar para a página inicial
         </a>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+        <div
+          class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2"
+        >
           <div>
             <h1 class="h3 fw-semibold mb-1">Simulação PRICE</h1>
             <p class="text-muted mb-0">Sistema Francês de Amortização</p>
@@ -71,6 +73,22 @@
                   </div>
 
                   <div class="col-12">
+                    <label for="periodo_juros" class="form-label"
+                      >Periodo de juros:</label
+                    >
+                    <select
+                      class="form-control"
+                      id="periodo_juros"
+                      name="periodo_juros"
+                      required
+                    >
+                      <option value="mensal" selected>Mensal</option>
+                      <option value="trimestral">Trimestral</option>
+                      <option value="semestral">Semestral</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
                     <label for="taxa_juros_price" class="form-label"
                       >Taxa de juros mensal (%)</label
                     >
@@ -105,7 +123,7 @@
                     >
                       <i class="bi bi-calculator"></i>Gerar parcelas
                     </button>
-                    <button type="reset" class="btn btn-outline-secondary">
+                    <button type="reset" class="btn btn-outline-secondary"  onclick="limparTabela('tabela_price')">
                       <i class="bi bi-eraser"></i>Limpar
                     </button>
                   </div>
@@ -117,7 +135,9 @@
           <div class="col-12 col-lg-7">
             <div class="card border-0 shadow-sm h-100">
               <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+                <div
+                  class="d-flex align-items-center justify-content-between mb-3"
+                >
                   <h2 class="h5 section-title mb-0">Tabela de parcelas</h2>
                   <span class="text-muted small">PRICE</span>
                 </div>

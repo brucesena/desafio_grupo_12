@@ -12,6 +12,10 @@
 
     JavaScript
 
+    Bootstrap
+
+    JQuery
+
 --
 
 👥 Integrantes do Grupo

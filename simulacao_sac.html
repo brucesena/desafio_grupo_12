@@ -30,12 +30,12 @@
           <i class="bi bi-arrow-left"></i>Voltar para a página inicial
         </a>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+        <div
+          class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2"
+        >
           <div>
             <h1 class="h3 fw-semibold mb-1">Simulação SAC</h1>
-            <p class="text-muted mb-0">
-              Sistema de Amortização Constante
-            </p>
+            <p class="text-muted mb-0">Sistema de Amortização Constante</p>
           </div>
           <span class="badge badge-soft px-3 py-2">Parcelas decrescentes</span>
         </div>
@@ -70,6 +70,22 @@
                       name="valor_entrada_sac"
                       required
                     />
+                  </div>
+
+                  <div class="col-12">
+                    <label for="periodo_juros" class="form-label"
+                      >Periodo de juros:</label
+                    >
+                    <select
+                      class="form-control"
+                      id="periodo_juros"
+                      name="periodo_juros"
+                      required
+                    >
+                      <option value="mensal" selected>Mensal</option>
+                      <option value="trimestral">Trimestral</option>
+                      <option value="semestral">Semestral</option>
+                    </select>
                   </div>
 
                   <div class="col-12">
@@ -119,7 +135,9 @@
           <div class="col-12 col-lg-7">
             <div class="card border-0 shadow-sm h-100">
               <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+                <div
+                  class="d-flex align-items-center justify-content-between mb-3"
+                >
                   <h2 class="h5 section-title mb-0">Tabela de parcelas</h2>
                   <span class="text-muted small">SAC</span>
                 </div>

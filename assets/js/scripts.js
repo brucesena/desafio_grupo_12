@@ -1,11 +1,19 @@
-$(document).ready(function(){
-    $(".valores").maskMoney({prefix:'R$ ', allowNegative: false, thousands:'.', decimal:',', affixesStay: false});
+$(document).ready(function () {
+    $(".valores").maskMoney({ prefix: 'R$ ', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
 });
 
+//Função agora evita NaN 
 function getValorNumerico(campo) {
     let valor = $("#" + campo).val();
-    //remover letras e simbolos
-    return parseFloat(valor.replace(/[R$\s]/g, "").replace(/\./g, "").replace(/,/g, "."));
+
+    if (!valor) return 0;
+
+    return parseFloat(
+        valor
+            .replace(/[R$\s]/g, "")
+            .replace(/\./g, "")
+            .replace(/,/g, ".")
+    ) || 0;
 }
 function formatarDataBR(data) {
     return data.toLocaleDateString('pt-BR');
@@ -30,7 +38,16 @@ function adicionarMeses(dataBase, meses) {
     return novaData;
 }
 
+function limparTabela(tabela) {
+    $("#corpo_" + tabela).html("");
+}
+
 function calcula_price() {
+
+    limparTabela("tabela_price");
+
+    let select = document.querySelector('#periodo_juros');
+    let periodo_juros = select.value;
     if (!$("#dados_financiamento_price").valid()) return; // <- só isso
 
     //variaveis price
@@ -38,17 +55,43 @@ function calcula_price() {
     let valor_financiamento = getValorNumerico("valor_financiamento_price");
     let taxa_juros = getValorNumerico("taxa_juros_price") / 100;
     let n_parcelas = getValorNumerico("num_parcelas_price");
+
+    //validadores
+    if (!valor_financiamento || !n_parcelas) {
+        alert("Preencha os campos corretamente!");
+        return;
+    }
+
+    if (valor_entrada > valor_financiamento) {
+        alert("A entrada não pode ser maior que o financiamento");
+        return;
+    }
+
+    //contador de parcelas 
+    let incremento = 1;
+    if (periodo_juros == "trimestral") {
+        incremento = 3;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    } else if (periodo_juros == "semestral") {
+        incremento = 6;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    }
+
     let valor_presente = valor_financiamento - valor_entrada;
 
-    let valor_parcela =
-        valor_presente *
-        (
-            (taxa_juros * ((1 + taxa_juros) ** n_parcelas)) /
-            (((1 + taxa_juros) ** n_parcelas) - 1)
-        );
-
+    //valida se a taxa de juros é >= 0 
+    if (taxa_juros === 0) {
+        valor_parcela = valor_presente / n_parcelas;
+    } else {
+        valor_parcela =
+            valor_presente *
+            (
+                (taxa_juros * ((1 + taxa_juros) ** n_parcelas)) /
+                (((1 + taxa_juros) ** n_parcelas) - 1)
+            );
+    }
     let parcelas = [];
-    let saldo_devedor = valor_presente; 
+    let saldo_devedor = valor_presente;
     let data_base = new Date();
 
     for (let i = 1; i <= n_parcelas; i++) {
@@ -57,26 +100,29 @@ function calcula_price() {
         let amortizacao = valor_parcela - juros;
 
         saldo_devedor = saldo_devedor - amortizacao;
-        let data_parcela = adicionarMeses(data_base, i); 
-        if(saldo_devedor<0){
-            saldo_devedor=0;
-        }
+        let data_parcela = adicionarMeses(data_base, i * incremento);
+
         parcelas.push({
             parcela: i,
             vencimento: formatarDataBR(data_parcela),
             valor_parcela: valor_parcela,
             amortizacao: amortizacao,
             juros: juros,
-            saldo_devedor: saldo_devedor
+            saldo_devedor: saldo_devedor < 0 ? 0 : saldo_devedor
         });
     }
-  mostra_resultado("tabela_price", parcelas);
 
-
+    mostra_resultado("tabela_price", parcelas);
 }
 
+
 function calcula_sac() {
-    if (!$("#dados_financiamento_sac").valid()) return; 
+    limparTabela("tabela_sac");
+
+    if (!$("#dados_financiamento_sac").valid()) return;
+
+    let select = document.querySelector('#periodo_juros');
+    let periodo_juros = select.value;
 
     //variaveis sac
     let valor_entrada = getValorNumerico("valor_entrada_sac");
@@ -84,8 +130,29 @@ function calcula_sac() {
     let taxa_juros = getValorNumerico("taxa_juros_sac") / 100;
     let n_parcelas = getValorNumerico("num_parcelas_sac");
     let valor_presente = valor_financiamento - valor_entrada;
-    parcelas = []
+    let parcelas = []
     let data_base = new Date();
+
+    // validadores
+    if (!valor_financiamento || !n_parcelas) {
+        alert("Preencha os campos corretamente!");
+        return;
+    }
+
+    if (valor_entrada > valor_financiamento) {
+        alert("A entrada não pode ser maior que o financiamento");
+        return;
+    }
+
+    //contador de parcelas 
+    let incremento = 1;
+    if (periodo_juros == "trimestral") {
+        incremento = 3;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    } else if (periodo_juros == "semestral") {
+        incremento = 6;
+        taxa_juros = (1 + taxa_juros) ** incremento - 1;
+    }
 
     for (let i = 1; i <= n_parcelas; i++) {
 
@@ -93,17 +160,15 @@ function calcula_sac() {
         let juros = (valor_presente - (amortizacao * (i - 1))) * taxa_juros;
         let valor_parcela = amortizacao + juros;
         let saldo_devedor = valor_presente - (amortizacao * i);
-        let data_parcela = adicionarMeses(data_base, i); 
-        if(saldo_devedor<0){
-            saldo_devedor=0;
-        }
-        parcelas.push({ 
-            parcela: i, 
-            valor_parcela: valor_parcela, 
+        let data_parcela = adicionarMeses(data_base, i * incremento);
+
+        parcelas.push({
+            parcela: i,
+            valor_parcela: valor_parcela,
             vencimento: formatarDataBR(data_parcela),
-            amortizacao: amortizacao, 
-            juros: juros, 
-            saldo_devedor: saldo_devedor
+            amortizacao: amortizacao,
+            juros: juros,
+            saldo_devedor: saldo_devedor < 0 ? 0 : saldo_devedor
         });
     }
 
@@ -121,14 +186,14 @@ function mostra_resultado(tabela, parcelas) {
     tabela_html.empty();
     parcelas.forEach(function (parcela) {
         tabela_html.append(`<tr>
-            <td>${parcela.parcela}</td>
-            <td>${(parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${(parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${(parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${(parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${parcela.vencimento}</td>
-            </tr>
-        `)
+                <td>${parcela.parcela}</td>
+                <td>${(parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${parcela.vencimento}</td>
+                </tr>
+            `)
     });
 }
 
@@ -150,18 +215,18 @@ $("#dados_financiamento_sac").validate({
                 depends: function (element) { return getValorNumerico(element.id) > 0; }
             }
         },
-        taxa_juros_sac:  { required: true, min: 0.01 },
+        taxa_juros_sac: { required: false, min: 0.00 }, // <-- A taxa de juros pode ser 0? Se não, required: true
         num_parcelas_sac: { required: true, min: 1 },
     },
     messages: {
         valor_financiamento_sac: "Informe o valor do financiamento.",
-        valor_entrada_sac:       { menorQue: "A entrada deve ser menor que o valor do financiamento." },
-        taxa_juros_sac:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
-        num_parcelas_sac:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+        valor_entrada_sac: { menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        //taxa_juros_sac: { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },  <-- A taxa de juros pode ser 0? Se não, descomentar
+        num_parcelas_sac: { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
     },
     errorElement: "div",
     errorClass: "invalid-feedback",
-    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    highlight: function (el) { $(el).addClass("is-invalid"); },
     unhighlight: function (el) { $(el).removeClass("is-invalid"); },
     errorPlacement: function (error, element) { error.insertAfter(element); },
     submitHandler: function () { return false; }
@@ -177,18 +242,18 @@ $("#dados_financiamento_price").validate({
                 depends: function (element) { return getValorNumerico(element.id) > 0; }
             }
         },
-        taxa_juros_price:  { required: true, min: 0.01 },
+        taxa_juros_price: { required: true, min: 0.01 },
         num_parcelas_price: { required: true, min: 1 },
     },
     messages: {
         valor_financiamento_price: "Informe o valor do financiamento.",
-        valor_entrada_price:       { menorQue: "A entrada deve ser menor que o valor do financiamento." },
-        taxa_juros_price:          { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
-        num_parcelas_price:        { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
+        valor_entrada_price: { menorQue: "A entrada deve ser menor que o valor do financiamento." },
+        taxa_juros_price: { required: "Informe a taxa de juros.", min: "A taxa deve ser maior que zero." },
+        num_parcelas_price: { required: "Informe o número de parcelas.", min: "Deve haver ao menos 1 parcela." },
     },
     errorElement: "div",
     errorClass: "invalid-feedback",
-    highlight:   function (el) { $(el).addClass("is-invalid"); },
+    highlight: function (el) { $(el).addClass("is-invalid"); },
     unhighlight: function (el) { $(el).removeClass("is-invalid"); },
     errorPlacement: function (error, element) { error.insertAfter(element); },
     submitHandler: function () { return false; }
