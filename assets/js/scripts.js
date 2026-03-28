@@ -2,12 +2,18 @@ $(document).ready(function () {
     $(".valores").maskMoney({ prefix: 'R$ ', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
 });
 
-
-
+//Fnção agora evita NaN 
 function getValorNumerico(campo) {
-    let valor = document.getElementById(campo).value;
-    //remover letras e simbolos
-    return parseFloat(valor.replace(/[R$\s]/g, "").replace(/\./g, "").replace(/,/g, "."));
+    let valor = $("#" + campo).val();
+
+    if (!valor) return 0;
+
+    return parseFloat(
+        valor
+            .replace(/[R$\s]/g, "")
+            .replace(/\./g, "")
+            .replace(/,/g, ".")
+    ) || 0;
 }
 function formatarDataBR(data) {
     return data.toLocaleDateString('pt-BR');
@@ -44,11 +50,11 @@ function calcula_price() {
     let n_parcelas = getValorNumerico("num_parcelas_price");
 
     if (periodo_juros == "trimestral") {
-        taxa_juros = ((1 + taxa_juros) ** (1 / 3)) - 1;
+        taxa_juros = (1 + taxa_juros) ** 3 - 1;
         n_parcelas = n_parcelas * 3;
-    } else if (periodo_juros == "anual") {
-        taxa_juros = ((1 + taxa_juros) ** (1 / 12)) - 1;
-        n_parcelas = n_parcelas * 12;
+    } else if (periodo_juros == "semestral") {
+        taxa_juros = (1 + taxa_juros) ** 6 - 1;
+        n_parcelas = n_parcelas * 6;
     }
 
     let valor_presente = valor_financiamento - valor_entrada;
@@ -85,6 +91,7 @@ function calcula_price() {
     mostra_resultado("tabela_price", parcelas);
 }
 
+
 function calcula_sac() {
 
     //variaveis sac
@@ -119,21 +126,22 @@ function calcula_sac() {
 }
 
 /**
- * 
+ *
  * @param {*} tabela Nome do objeto html que vai recebar o resultado
  * @param {*} parcelas Parcelas geradas no metodo calcula_price ou calcula_sac
  */
 function mostra_resultado(tabela, parcelas) {
-    let tabela_html = document.getElementById("corpo_" + tabela);
-    tabela_html.innerHTML = "";
+    tabela_html = $("#corpo_" + tabela)
+    tabela_html.empty();
     parcelas.forEach(function (parcela) {
-        tabela_html.innerHTML += "<tr> " +
-            "<td>" + parcela.parcela + "</td>" +
-            "<td>" + (parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + (parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "</td>" +
-            "<td>" + parcela.vencimento + "</td>"
-        "</tr>";
+        tabela_html.append(`<tr>
+                <td>${parcela.parcela}</td>
+                <td>${(parcela.valor_parcela).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.amortizacao).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.juros).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${(parcela.saldo_devedor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${parcela.vencimento}</td>
+                </tr>
+            `)
     });
 }
