@@ -20,7 +20,7 @@
 
 👥 Integrantes do Grupo
 
-    Bruce Sena
+    Bruce Cruz de Sena
 
     Luiz Henrik Rodrigues Raphaelli
 
